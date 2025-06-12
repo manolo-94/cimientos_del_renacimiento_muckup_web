@@ -1,0 +1,48 @@
+html {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: sans-serif;
+}
+
+body {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  color: #7b7b7b;
+  /* background-image: linear-gradient(45deg, #000, #4767e8 50%); */
+  background-color: #fae8d6;
+}
+
+#map-wrapper {
+  height: 70vh;
+  width: 80%;
+  overflow: hidden;
+  border-radius: 1rem;
+  box-shadow: 0 0 10px 0px #ccc;
+}
+
+#map {
+  height: 100%;
+}
+
+.cluser-div {
+  background-color: #fff;
+  height: 3rem;
+  width: 3rem;
+  border-radius: 50%;
+  box-shadow: 0 0 0px 4px #4767e8;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: translate(-50%, -50%);
+  color: #4767e8;
+  font-size: 1.5rem;
+  font-weight: bold;
+}

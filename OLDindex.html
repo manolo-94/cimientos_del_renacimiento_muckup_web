@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cimientos del Renacimiento</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css"
+    />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <!-- SwiperJS CDN -->
+    <!-- Swiper CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+    />
+    <style>
+      :root {
+        --color-vino: #901b45;
+        --color-mostaza: #c6943d;
+        --color-fondo: #fef9ec;
+      }
+
+      * {
+        box-sizing: border-box;
+        font-family: "Montserrat", sans-serif;
+      }
+
+      body {
+        margin: 0;
+        background: var(--color-fondo);
+        color: #333;
+      }
+
+      h2.centrado {
+        text-align: center;
+      }
+
+      header {
+        background: var(--color-fondo);
+        color: white;
+        padding: 1.5rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+      }
+
+      header nav a {
+        color: var(--color-vino);
+        text-decoration: none;
+        margin-left: 1.5rem;
+        font-weight: bold;
+        z-index: 1000;
+      }
+
+      .hero {
+        width: 100vw;
+        height: 100vh;
+        background: url("src/img/portada.png") center/cover no-repeat;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .hero h1 {
+        font-size: 3rem;
+        margin-top: 2rem;
+        color: var(--color-vino);
+        background: white;
+        padding: 0.5rem 1rem;
+        border-radius: 1rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      section:not(.hero) {
+        padding: 4rem 2rem;
+        max-width: 1200px;
+        margin: auto;
+      }
+
+      .map-section {
+        height: 80vh;
+        padding: 0;
+        position: relative;
+      }
+
+      #map {
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+      }
+
+      .info.legend {
+        background: rgba(255, 255, 255, 0.8);
+        padding: 6px;
+        border-radius: 4px;
+        z-index: 10;
+      }
+
+      .filter-container {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 10;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 10px;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      #clear-filters {
+        margin-top: 10px;
+        background-color: var(--color-vino);
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      #clear-filters:hover {
+        background-color: #6d1233;
+      }
+
+      .ejes-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+      }
+
+      .card {
+        background: white;
+        border-radius: 1rem;
+        padding: 2rem;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s;
+      }
+
+      .card:hover {
+        transform: translateY(-5px);
+      }
+
+      .card h3 {
+        color: var(--color-vino);
+      }
+
+      .card p {
+        color: #333;
+      }
+
+      .transparencia {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+      }
+
+      .transparencia-img {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+        border-radius: 1rem;
+      }
+
+      footer {
+        background: var(--color-vino);
+        color: white;
+        text-align: center;
+        padding: 2rem;
+      }
+
+      h2 {
+        color: var(--color-mostaza);
+      }
+
+      .scroll-down {
+        position: absolute;
+        bottom: 20px;
+        font-size: 2rem;
+        color: black;
+        animation: bounce 2s infinite;
+      }
+
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(10px);
+        }
+      }
+
+      @media (min-aspect-ratio: 16/9) {
+        .hero {
+          background-size: contain;
+        }
+      }
+
+      .entidades-section {
+        padding: 4rem 2rem;
+        background-color: #fef9ec;
+        text-align: center;
+      }
+
+      .entidades-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+      }
+
+      .entidad-card {
+        background: white;
+        border-radius: 1rem;
+        padding: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+      }
+
+      .entidad-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .entidad-card img {
+        width: 60px;
+        height: 60px;
+        object-fit: contain;
+        margin-bottom: 1rem;
+      }
+
+      .entidad-card h3 {
+        color: var(--color);
+        margin-bottom: 1rem;
+      }
+
+      .barra {
+        width: 100%;
+        background: #eee;
+        border-radius: 8px;
+        overflow: hidden;
+        height: 12px;
+        margin-bottom: 0.5rem;
+      }
+
+      .progreso {
+        height: 100%;
+        background: var(--color);
+        width: 0;
+        transition: width 1.5s ease-out;
+      }
+
+      .swiper-slide img {
+        width: 100%;
+        border-radius: 1rem;
+        cursor: pointer;
+        transition: transform 0.3s;
+      }
+      .swiper-slide img:hover {
+        transform: scale(1.03);
+      }
+      .centrado {
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div style="display: flex; align-items: center; gap: 1rem">
+        <img
+          src="src/img/logo-yucatan.png"
+          alt="Escudo de Yucatán"
+          style="height: 50px"
+        />
+        <!-- <strong>Cimientos del Renacimiento</strong> -->
+      </div>
+      <nav>
+        <a href="#fideicomiso">¿Qué es?</a>
+        <a href="#mapa">Mapa</a>
+        <a href="#ejes">Ejes</a>
+        <a href="#transparencia">Transparencia</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <!-- <h1>Cimientos del Renacimiento</h1> -->
+      <div class="scroll-down">&#8595;</div>
+    </section>
+
+    <section id="fideicomiso">
+      <h2 class="centrado">¿Qué es Cimientos del Renacimiento?</h2>
+      <p>
+        El programa busca mejorar las condiciones laborales y de vida, de las y
+        los obreros de la construcción, con un enfoque de bienestar integral
+        alineado al Plan Estatal de Desarrollo Renacimiento Maya 2024-2030 y al
+        programa Aliados por la Vida.
+      </p>
+    </section>
+
+    <section id="mapa" class="map-section">
+      <!--<h2
+        style="
+          text-align: center;
+          padding: 1rem 0;
+          background: white;
+          margin: 0;
+        "
+      >
+        Mapa de Obras del Fideicomiso
+      </h2> -->
+      <div class="filter-container">
+        <label>
+          Entidad:
+          <select id="filtro-entidad">
+            <option value="todos">Todos</option>
+            <option>IDEFEEY</option>
+            <option>INCAY</option>
+            <option>INCCOPY</option>
+            <option>IVEY</option>
+            <option>JAPAY</option>
+          </select>
+        </label>
+        <br />
+        <label>
+          Municipio:
+          <select id="filtro-municipio">
+            <option value="todos">Todos</option>
+          </select>
+        </label>
+        <br />
+        <label>
+          Estatus:
+          <select id="filtro-estatus">
+            <option value="todos">Todos</option>
+            <option value="finalizada">Finalizada</option>
+            <option value="proceso">En proceso</option>
+            <option value="planeacion">Planeación</option>
+          </select>
+          <button id="clear-filters">Borrar filtros</button>
+        </label>
+      </div>
+
+      <div id="map"></div>
+    </section>
+
+    <!-- Sección: Galería + Mapa + Descripción -->
+    <section
+      id="galeria-mapa-obras"
+      style="display: flex; flex-wrap: wrap; padding: 2rem; gap: 2rem"
+    >
+      <!-- Galería -->
+      <div style="flex: 1 1 40%; min-width: 300px">
+        <h2 class="centrado">Galería de Obras</h2>
+        <div class="swiper galeria-swiper">
+          <div class="swiper-wrapper" id="swiper-wrapper">
+            <!-- Las imágenes se llenan dinámicamente -->
+          </div>
+          <div class="swiper-button-next"></div>
+          <div class="swiper-button-prev"></div>
+          <div class="swiper-pagination"></div>
+        </div>
+      </div>
+
+      <!-- Mapa + Descripción -->
+      <div
+        style="
+          flex: 1 1 55%;
+          min-width: 300px;
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+        "
+      >
+        <h2 class="centrado">Detalle de Obra</h2>
+
+        <!-- Mapa -->
+        <div
+          id="map2"
+          style="
+            height: 300px;
+            width: 100%;
+            background-color: #ccc;
+            border-radius: 1rem;
+          "
+        ></div>
+
+        <!-- Descripción -->
+        <div
+          id="descripcion-obra"
+          style="background: #f9f9f9; padding: 1rem; border-radius: 1rem"
+        >
+          <strong>Selecciona una obra para ver su descripción.</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="entidades-section">
+      <h2>Avance por Entidad</h2>
+      <div class="entidades-grid">
+        <!-- Tarjeta por entidad -->
+        <div class="entidad-card" style="--color: orange">
+          <img src="src/img/logo.png" alt="IDEFEEY Logo" />
+          <h3>IDEFEEY</h3>
+          <div class="barra">
+            <div class="progreso" style="width: 75%"></div>
+          </div>
+          <p>75% completado</p>
+        </div>
+
+        <div class="entidad-card" style="--color: green">
+          <img src="src/img/logo.png" alt="INCAY Logo" />
+          <h3>INCAY</h3>
+          <div class="barra">
+            <div class="progreso" style="width: 60%"></div>
+          </div>
+          <p>60% completado</p>
+        </div>
+
+        <div class="entidad-card" style="--color: yellow">
+          <img src="src/img/logo.png" alt="INCAY Logo" />
+          <h3>INCCOPY</h3>
+          <div class="barra">
+            <div class="progreso" style="width: 50%"></div>
+          </div>
+          <p>50% completado</p>
+        </div>
+
+        <div class="entidad-card" style="--color: PURPLE">
+          <img src="src/img/logo.png" alt="INCAY Logo" />
+          <h3>IVEY</h3>
+          <div class="barra">
+            <div class="progreso" style="width: 60%"></div>
+          </div>
+          <p>60% completado</p>
+        </div>
+
+        <div class="entidad-card" style="--color: RED">
+          <img src="src/img/logo.png" alt="INCAY Logo" />
+          <h3>JAPAY</h3>
+          <div class="barra">
+            <div class="progreso" style="width: 80%"></div>
+          </div>
+          <p>80% completado</p>
+        </div>
+
+        <!-- Añade los demás igual -->
+      </div>
+    </section>
+
+    <section id="ejes">
+      <h2 class="centrado">Ejes de trabajo</h2>
+      <div class="ejes-grid">
+        <div class="card">
+          <h3>Formación Técnica y Profesionalización</h3>
+          <p>
+            mpulsa el desarrollo de habilidades y competencias en los
+            trabajadores mediante capacitaciones, certificaciones y programas de
+            educación técnica.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Seguridad Laboral en Obra</h3>
+          <p>
+            Promueve entornos seguros en el trabajo, con protocolos de
+            prevención, equipos adecuados y capacitación constante en normas de
+            seguridad.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Prevención de Addicciones y Salud Mental</h3>
+          <p>
+            Fomenta el bienestar integral con campañas de concientización, apoyo
+            psicológico y acciones para prevenir adicciones en entornos
+            laborales.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Acompañamiento y Bienestar Familiar e Infantil</h3>
+          <p>
+            Brinda apoyo a las familias de los trabajadores mediante programas
+            de desarrollo infantil, asistencia educativa y servicios integrales
+            de bienestar.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Transparencia y Rendición de Cuentas</h3>
+          <p>
+            Garantiza el acceso a información clara y pública sobre el uso de
+            recursos, avances de obra y resultados, promoviendo la confianza
+            ciudadana.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="transparencia">
+      <h2 class="centrado">Transparencia</h2>
+      <div class="transparencia">
+        <div>
+          <img
+            src="src/img/reportes.png"
+            alt="Reporte"
+            class="transparencia-img"
+          />
+          <p>Accede a reportes trimestrales y documentación oficial.</p>
+        </div>
+        <div>
+          <img
+            src="src/img/auditores.jpg"
+            alt="Auditoría"
+            class="transparencia-img"
+          />
+          <p>Auditorías públicas disponibles para descarga.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <p>&copy; 2025 Cimientos del Renacimiento | Gobierno de Yucatán</p>
+    </footer>
+
+    <!-- Aquí insertas tu script de mapa actual -->
+    <!-- LIBRERÍAS -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+    <script src="https://unpkg.com/lottie-web@latest/build/player/lottie.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+    <!-- SCRIPT JS PRINCIPAL -->
+    <script src="src/index.js"></script>
+    <script src="src/map2.js"></script>
+  </body>
+</html>
