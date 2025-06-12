@@ -709,6 +709,50 @@
   let swiperInstance;
 
   $(document).ready(function () {
+
+    let municipiosSet = new Set();
+    let municipioLayers = {};
+    let municipiosData = []; // Aquí guardaremos municipios + obras
+
+    fetch("yucatan_municipios_2023.json")
+      .then((res) => res.json())
+      .then((data) => {
+        L.geoJSON(data, {
+
+          onEachFeature: (feature, layer) => {
+            const municipio = feature.properties.NOMGEO;
+
+            // Generar obras fake para este municipio
+            const obras = generarObrasFake().map((obra, i) => ({
+              ...obra,
+              id: i + 1,
+              municipio
+            }));
+
+            municipiosData.push({ municipio, obras });
+          }
+        });
+
+        llenarTablaMunicipios(); // Llamamos a esta función después de cargar y procesar los municipios
+      });
+
+    function generarObrasFake() {
+      const ESTATUS = ['Planeada', 'En proceso', 'Finalizada'];
+      const ENTIDADES = ['INAH', 'Gobierno Estatal', 'Gobierno Municipal'];
+      const cantidad = Math.floor(Math.random() * 4) + 1; // 1 a 4 obras
+      return Array.from({ length: cantidad }).map((_, i) => ({
+        nombre: `Obra demo #${i + 1}`,
+        entidad: ENTIDADES[Math.floor(Math.random() * ENTIDADES.length)],
+        estatus: ESTATUS[Math.floor(Math.random() * ESTATUS.length)],
+        descripcion: 'Descripción simulada de una obra pública en el municipio.',
+        fotos: [
+          'https://placehold.co/600x400?text=Obra+1',
+          'https://placehold.co/600x400?text=Obra+2',
+          'https://placehold.co/600x400?text=Obra+3'
+        ]
+      }));
+    }
+
     // Elimina acentos y normaliza caracteres para el filtro de busqueda en la tabla de municipios
     jQuery.fn.DataTable.ext.type.search.string = function (data) {
       return !data
@@ -718,72 +762,68 @@
           : data;
     };
 
-    const tabla = $('#tablaMunicipios').DataTable({
-      data: data.map(m => ({
-        municipio: m.municipio,
-        totalObras: m.obras.length,
-        acciones: `<button id="button-primary-custom" class="btn btn-primary btn-sm ver-obras" data-municipio="${m.municipio}">Ver Obras</button>`
-      })),
-      columns: [
-        { data: 'municipio' },
-        { data: 'totalObras' },
-        { data: 'acciones' }
-      ]
-    });
-
-    $('#tablaMunicipios tbody').on('click', '.ver-obras', function () {
-      const municipio = $(this).data('municipio');
-      const municipioData = data.find(m => m.municipio === municipio);
-
-      $('#modalMunicipio').text(municipio);
-      const listaObras = $('#listaObras').empty();
-      municipioData.obras.forEach(obra => {
-        listaObras.append(`<li class="list-group-item obra-link" data-id="${obra.id}" data-mun="${municipio}">${obra.nombre}</li>`);
-      });
-      new bootstrap.Modal('#modalObras').show();
-    });
-
-    $(document).on('click', '.obra-link', function () {
-      const obraId = $(this).data('id');
-      const municipio = $(this).data('mun');
-      const obra = data.find(m => m.municipio === municipio).obras.find(o => o.id === obraId);
-
-      $('#detalleNombre').text(obra.nombre);
-      $('#detalleMunicipio').text(obra.municipio);
-      $('#detalleEntidad').text(obra.entidad);
-      $('#detalleEstatus').text(obra.estatus);
-      $('#detalleDescripcion').text(obra.descripcion);
-
-      /*
-      const fotosHtml = obra.fotos.map(f => `
-        <div class="col-md-4">
-          <img src="${f}" class="galeria-img mb-2">
-        </div>`).join('');
-      $('#detalleFotos').html(fotosHtml);
-      */
-
-      const swiperWrapper = $('#swiper-wrapper').empty();
-      obra.fotos.forEach(f => {
-        swiperWrapper.append(`<div class="swiper-slide"><img src="${f}" alt="foto de obra"></div>`);
+    function llenarTablaMunicipios() {
+      const tabla = $('#tablaMunicipios').DataTable({
+        data: municipiosData.map(m => ({
+          municipio: m.municipio,
+          totalObras: m.obras.length,
+          acciones: `<button class="btn btn-primary btn-sm ver-obras" data-municipio="${m.municipio}">Ver Obras</button>`
+        })),
+        columns: [
+          { data: 'municipio' },
+          { data: 'totalObras' },
+          { data: 'acciones' }
+        ]
       });
 
-      if (swiperInstance) swiperInstance.destroy(true, true);
-      swiperInstance = new Swiper('.swiper', {
-        loop: true,
-        pagination: {
-          el: '.swiper-pagination',
-          clickable: true
-        },
-        navigation: {
-          nextEl: '.swiper-button-next',
-          prevEl: '.swiper-button-prev'
+      $('#tablaMunicipios tbody').on('click', '.ver-obras', function () {
+        const municipio = $(this).data('municipio');
+        const municipioData = municipiosData.find(m => m.municipio === municipio);
+
+        $('#modalMunicipio').text(municipio);
+        const listaObras = $('#listaObras').empty();
+        municipioData.obras.forEach(obra => {
+          listaObras.append(`<li class="list-group-item obra-link" data-id="${obra.id}" data-mun="${municipio}">${obra.nombre}</li>`);
+        });
+        new bootstrap.Modal('#modalObras').show();
+      });
+
+      $(document).on('click', '.obra-link', function () {
+        const obraId = $(this).data('id');
+        const municipio = $(this).data('mun');
+        const obra = municipiosData.find(m => m.municipio === municipio).obras.find(o => o.id === obraId);
+    
+        $('#detalleNombre').text(obra.nombre);
+        $('#detalleMunicipio').text(obra.municipio);
+        $('#detalleEntidad').text(obra.entidad);
+        $('#detalleEstatus').text(obra.estatus);
+        $('#detalleDescripcion').text(obra.descripcion);
+    
+        const swiperWrapper = $('#swiper-wrapper').empty();
+        obra.fotos.forEach(f => {
+          swiperWrapper.append(`<div class="swiper-slide"><img src="${f}" alt="foto de obra"></div>`);
+        });
+    
+        if (swiperInstance) {
+          swiperInstance.destroy(true, true);
         }
+        
+        swiperInstance = new Swiper('.swiper', {
+          loop: true,
+          pagination: {
+            el: '.swiper-pagination',
+            clickable: true
+          },
+          navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev'
+          }
+        });
+        
+    
+        new bootstrap.Modal('#modalDetalleObra').show();
       });
-
-      new bootstrap.Modal('#modalDetalleObra').show();
-    });
-
-
+    }
   });
 
 </script>
