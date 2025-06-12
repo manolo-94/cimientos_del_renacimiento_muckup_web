@@ -127,7 +127,7 @@ fetch("yucatan_municipios_2023.json")
     addMunicipioOptions();
     setFiltersFromURL();
     applyFilters();
-    addLegend();
+    //addLegend();
   });
 
 function addMunicipioOptions() {
