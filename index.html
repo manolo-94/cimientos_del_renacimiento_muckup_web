@@ -298,6 +298,37 @@
     #cbutton-primary-custom:hover {
       background-color: #6d1233;
     }
+
+    .custom-cluster-vino {
+      background: radial-gradient(circle at 30% 30%, rgba(144, 27, 69, 0.9), rgba(144, 27, 69, 0.7));
+      border-radius: 20px; /* no 50% para evitar círculo perfecto */
+      color: white;
+      text-align: center;
+      font-weight: bold;
+      line-height: 40px;
+      width: 40px;
+      height: 40px;
+      border: 2px solid #fff;
+      box-shadow:
+        inset 0 0 5px rgba(0, 0, 0, 0.2),
+        0 2px 8px rgba(0, 0, 0, 0.3);
+      opacity: 0.95;
+    }
+    
+    
+    .custom-cluster-mostaza {
+      background-color: var(--color-mostaza);
+      border-radius: 50%;
+      color: white;
+      text-align: center;
+      font-weight: bold;
+      line-height: 40px;
+      width: 40px;
+      height: 40px;
+      border: 2px solid var(--color-fondo);
+      box-shadow: 0 0 5px #0003;
+    }
+    
   </style>
 </head>
 
@@ -634,77 +665,6 @@
 </html>
 
 <script>
-  const data = [
-    {
-      municipio: "Mérida",
-      obras: [
-        {
-          id: 1,
-          nombre: "Restauración del Palacio Municipal",
-          municipio: "Mérida",
-          entidad: "INAH",
-          estatus: "Finalizada",
-          descripcion: "Se restauró la fachada y estructura del palacio municipal con técnicas tradicionales.",
-          fotos: ["https://img.lajornadamaya.mx/610411711504800FScorredormeridacentrouman.jpg", "https://arandano.lajornadamaya.mx/img/cuerpo-3/FScorredormeridacentrouman1.jpeg", "https://www.cmic.org/wp-content/uploads/2021/09/Industria-de-la-construccion-sigue-siendo-motor-economico-de-Yucatan.jpg"]
-        },
-        {
-          id: 2,
-          nombre: "Rehabilitación del Paseo de Montejo",
-          municipio: "Mérida",
-          entidad: "Gobierno Estatal",
-          estatus: "En proceso",
-          descripcion: "Rehabilitación de banquetas, mobiliario urbano y luminarias.",
-          fotos: ["https://img.lajornadamaya.mx/610411711504800FScorredormeridacentrouman.jpg", "https://arandano.lajornadamaya.mx/img/cuerpo-3/FScorredormeridacentrouman1.jpeg", "https://www.cmic.org/wp-content/uploads/2021/09/Industria-de-la-construccion-sigue-siendo-motor-economico-de-Yucatan.jpg"]
-        }
-      ]
-    },
-    {
-      municipio: "Valladolid",
-      obras: [
-        {
-          id: 3,
-          nombre: "Conservación del Ex Convento de San Bernardino",
-          municipio: "Valladolid",
-          entidad: "INAH",
-          estatus: "Finalizada",
-          descripcion: "Obras de conservación estructural e impermeabilización.",
-          fotos: ["https://img.lajornadamaya.mx/610411711504800FScorredormeridacentrouman.jpg", "https://arandano.lajornadamaya.mx/img/cuerpo-3/FScorredormeridacentrouman1.jpeg", "https://www.cmic.org/wp-content/uploads/2021/09/Industria-de-la-construccion-sigue-siendo-motor-economico-de-Yucatan.jpg"]
-        },
-        {
-          id: 4,
-          nombre: "Rehabilitación del mercado municipal",
-          municipio: "Valladolid",
-          entidad: "Gobierno Municipal",
-          estatus: "Planeada",
-          descripcion: "Se planea mejorar la infraestructura del mercado.",
-          fotos: ["https://img.lajornadamaya.mx/610411711504800FScorredormeridacentrouman.jpg", "https://arandano.lajornadamaya.mx/img/cuerpo-3/FScorredormeridacentrouman1.jpeg", "https://www.cmic.org/wp-content/uploads/2021/09/Industria-de-la-construccion-sigue-siendo-motor-economico-de-Yucatan.jpg"]
-        }
-      ]
-    },
-    {
-      municipio: "Tizimín",
-      obras: [
-        {
-          id: 5,
-          nombre: "Restauración del Templo de los Tres Reyes",
-          municipio: "Tizimín",
-          entidad: "INAH",
-          estatus: "Finalizada",
-          descripcion: "Reparación de bóvedas y restauración de retablos.",
-          fotos: ["https://img.lajornadamaya.mx/610411711504800FScorredormeridacentrouman.jpg", "https://arandano.lajornadamaya.mx/img/cuerpo-3/FScorredormeridacentrouman1.jpeg", "https://www.cmic.org/wp-content/uploads/2021/09/Industria-de-la-construccion-sigue-siendo-motor-economico-de-Yucatan.jpg"]
-        },
-        {
-          id: 6,
-          nombre: "Remodelación del parque principal",
-          municipio: "Tizimín",
-          entidad: "Gobierno Municipal",
-          estatus: "En proceso",
-          descripcion: "Nueva jardinería, luminarias y zonas de esparcimiento.",
-          fotos: ["https://img.lajornadamaya.mx/610411711504800FScorredormeridacentrouman.jpg", "https://arandano.lajornadamaya.mx/img/cuerpo-3/FScorredormeridacentrouman1.jpeg", "https://www.cmic.org/wp-content/uploads/2021/09/Industria-de-la-construccion-sigue-siendo-motor-economico-de-Yucatan.jpg"]
-        }
-      ]
-    }
-  ];
 
   let swiperInstance;
 

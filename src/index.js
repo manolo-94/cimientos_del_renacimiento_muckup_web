@@ -8,16 +8,24 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution: "© OpenStreetMap contributors",
 }).addTo(map);
 
-const markerCluster = L.markerClusterGroup();
+const markerCluster =  L.markerClusterGroup({
+  iconCreateFunction: function (cluster) {
+    return L.divIcon({
+      html: '<div><span>' + cluster.getChildCount() + '</span></div>',
+      className: 'custom-cluster-vino',
+      iconSize: L.point(40, 40)
+    });
+  }
+});
 let allMarkers = [];
 let municipiosSet = new Set();
 let municipioLayers = {}; // ✅ Guardamos las capas de municipios
 
 const entidades = [
-  { nombre: "IDEFEEY", color: "orange" },
-  { nombre: "INCAY", color: "green" },
-  { nombre: "INCCOPY", color: "yellow" },
-  { nombre: "IVEY", color: "purple" },
+  { nombre: "IDEFEEY", color: "red" },
+  { nombre: "INCAY", color: "red" },
+  { nombre: "INCCOPY", color: "red" },
+  { nombre: "IVEY", color: "red" },
   { nombre: "JAPAY", color: "red" },
 ];
 
@@ -80,7 +88,7 @@ fetch("yucatan_municipios_2023.json")
 
           const icon = L.divIcon({
             className: "custom-div-icon",
-            html: `<div style="background:${ent.color};width:20px;height:20px;border-radius:50%;"></div>`,
+            html: `<div class="custom-cluster-vino";width:20px;height:20px;border-radius:50%;"></div>`,
             iconSize: [20, 20],
             popupAnchor: [0, -10],
           });
