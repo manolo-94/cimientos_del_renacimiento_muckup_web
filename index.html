@@ -775,7 +775,7 @@
         data: municipiosData.map(m => ({
           municipio: m.municipio,
           totalObras: m.obras.length,
-          acciones: `<button class="btn btn-primary btn-sm ver-obras" data-municipio="${m.municipio}">Ver Obras</button>`
+          acciones: `<button id="button-primary-custom" class="btn btn-primary btn-sm ver-obras" data-municipio="${m.municipio}">Ver Obras</button>`
         })),
         columns: [
           { data: 'municipio' },
