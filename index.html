@@ -641,8 +641,9 @@
           </div>
           <div class="modal-body">
             <p><strong>Municipio:</strong> <span id="detalleMunicipio"></span></p>
-            <p><strong>Entidad:</strong> <span id="detalleEntidad"></span></p>
-            <p><strong>Estatus:</strong> <span id="detalleEstatus"></span></p>
+            <p><strong>Inversión:</strong> $ <span id="detalleInversion"></span> millones</p>
+            <p><strong>Ejecutora:</strong> <span id="detalleEntidad"></span></p>
+            <p><strong>Avance:</strong> <span id="detalleAvance"></span>%</p>
             <p><strong>Descripción:</strong> <span id="detalleDescripcion"></span></p>
 
             <div class="swiper mySwiper">
@@ -740,13 +741,17 @@
       });
 
     function generarObrasFake() {
+      const AVANCE = Math.floor(Math.random() * 100) + 1;
+      const INVERSION = Math.floor(Math.random() * 1000000) + 1;
       const ESTATUS = ['Planeada', 'En proceso', 'Finalizada'];
-      const ENTIDADES = ['INAH', 'Gobierno Estatal', 'Gobierno Municipal'];
+      const ENTIDADES = ['IDEFEEY', 'INCAY', 'INCCOPYl', 'IVEY', 'JAPAY'];
       const cantidad = Math.floor(Math.random() * 4) + 1; // 1 a 4 obras
       return Array.from({ length: cantidad }).map((_, i) => ({
         nombre: `Obra demo #${i + 1}`,
         entidad: ENTIDADES[Math.floor(Math.random() * ENTIDADES.length)],
         estatus: ESTATUS[Math.floor(Math.random() * ESTATUS.length)],
+        avance: AVANCE,
+        inversion: INVERSION,
         descripcion: 'Descripción simulada de una obra pública en el municipio.',
         fotos: [
           'https://placehold.co/600x400?text=Obra+1',
@@ -798,8 +803,9 @@
     
         $('#detalleNombre').text(obra.nombre);
         $('#detalleMunicipio').text(obra.municipio);
+        $('#detalleInversion').text(obra.inversion);
         $('#detalleEntidad').text(obra.entidad);
-        $('#detalleEstatus').text(obra.estatus);
+        $('#detalleAvance').text(obra.avance);
         $('#detalleDescripcion').text(obra.descripcion);
     
         const swiperWrapper = $('#swiper-wrapper').empty();
