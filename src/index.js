@@ -8,7 +8,7 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution: "© OpenStreetMap contributors",
 }).addTo(map);
 
-const markerCluster =  L.markerClusterGroup({
+const markerCluster = L.markerClusterGroup({
   iconCreateFunction: function (cluster) {
     return L.divIcon({
       html: '<div><span>' + cluster.getChildCount() + '</span></div>',
@@ -80,11 +80,11 @@ fetch("yucatan_municipios_2023.json")
           const lat =
             bounds.getSouthWest().lat +
             Math.random() *
-              (bounds.getNorthEast().lat - bounds.getSouthWest().lat);
+            (bounds.getNorthEast().lat - bounds.getSouthWest().lat);
           const lng =
             bounds.getSouthWest().lng +
             Math.random() *
-              (bounds.getNorthEast().lng - bounds.getSouthWest().lng);
+            (bounds.getNorthEast().lng - bounds.getSouthWest().lng);
 
           const icon = L.divIcon({
             className: "custom-div-icon",
@@ -101,9 +101,24 @@ fetch("yucatan_municipios_2023.json")
           );
 
           m.bindPopup(`
-              <div><strong>${ent.nombre}</strong><br>${municipio}<br>Estatus: ${estado}
-              <div id="${mid}" style="width:100px;height:100px;"></div></div>
-            `);
+            <div>
+              <strong>Municipio:</strong> ${municipio}<br>
+              <strong>Nombre de Obra:</strong> Obra demo #${Math.floor(Math.random() * 4) + 1}<br>
+              <strong>Inversión:</strong> ${Math.floor(Math.random() * 100000) + 1} millones<br>
+              <strong>Ejecutora:</strong> ${ent.nombre}<br>
+              <strong>Avance:</strong> ${Math.floor(Math.random() * 50) + 1} %<br>
+
+              <div class="popup-gallery">
+                <img src="https://placehold.co/600x400?text=Foto+1" onclick="openLightbox('https://placehold.co/600x400?text=Foto+1')" />
+                <img src="https://placehold.co/600x400?text=Foto+2" onclick="openLightbox('https://placehold.co/600x400?text=Foto+2')" />
+                <img src="https://placehold.co/600x400?text=Foto+3" onclick="openLightbox('https://placehold.co/600x400?text=Foto+3')" />
+              </div>
+            </div>
+          `, {
+            autoClose: false,
+            closeOnClick: false,
+            className: true,
+          });
           m.on("popupopen", () => {
             const c = document.getElementById(mid);
             if (c)
@@ -259,4 +274,14 @@ function addLegend() {
   };
 
   legend.addTo(map);
+}
+
+function openLightbox(src) {
+  const img = document.getElementById('lightbox-img');
+  img.src = src;
+  document.getElementById('lightbox').style.display = 'flex';
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').style.display = 'none';
 }
